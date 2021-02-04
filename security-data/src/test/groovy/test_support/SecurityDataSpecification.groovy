@@ -18,7 +18,7 @@ package test_support
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
-import io.jmix.dataeclipselink.DataEclipselinkConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.security.SecurityConfiguration
 import io.jmix.securitydata.SecurityDataConfiguration
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 @ContextConfiguration(
-        classes = [CoreConfiguration, DataConfiguration, DataEclipselinkConfiguration,
+        classes = [CoreConfiguration, DataConfiguration, EclipselinkConfiguration,
                 SecurityConfiguration, SecurityDataConfiguration, SecurityDataTestConfiguration],
         initializers = [TestContextInititalizer]
 )
