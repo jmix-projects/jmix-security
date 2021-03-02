@@ -151,7 +151,7 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     }
 
     @Override
-    public void changePassword(@Nullable String userName, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException {
+    public void changePassword(String userName, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException {
         Preconditions.checkNotNullArgument(userName, "Null userName");
         Preconditions.checkNotNullArgument(newPassword, "Null new password hash");
         T userDetails = loadUserByUsername(userName);
