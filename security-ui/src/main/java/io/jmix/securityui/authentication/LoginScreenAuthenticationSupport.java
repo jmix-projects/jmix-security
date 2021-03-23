@@ -21,7 +21,7 @@ import com.vaadin.server.VaadinServletResponse;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.property.UiScreensProperties;
+import io.jmix.ui.UiScreensProperties;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
 import org.springframework.beans.factory.annotation.Autowired;

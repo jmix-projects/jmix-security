@@ -35,7 +35,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import io.jmix.ui.property.UiComponentsProperties;
+import io.jmix.ui.UiComponentsProperties;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

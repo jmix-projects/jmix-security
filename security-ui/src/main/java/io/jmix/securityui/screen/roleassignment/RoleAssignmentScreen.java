@@ -23,7 +23,7 @@ import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
-import io.jmix.ui.property.UiScreensProperties;
+import io.jmix.ui.UiScreensProperties;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

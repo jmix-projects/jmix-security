@@ -24,7 +24,7 @@ import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
-import io.jmix.ui.property.UiScreensProperties;
+import io.jmix.ui.UiScreensProperties;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenValidation;
 import io.jmix.ui.screen.StandardCloseAction;
