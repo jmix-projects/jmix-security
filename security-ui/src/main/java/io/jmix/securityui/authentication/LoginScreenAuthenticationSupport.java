@@ -21,7 +21,7 @@ import com.vaadin.server.VaadinServletResponse;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiScreensProperties;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class LoginScreenAuthenticationSupport {
 
     protected AuthenticationManager authenticationManager;
 
-    protected UiScreensProperties screensProperties;
+    protected UiScreenProperties screenProperties;
     protected CoreProperties coreProperties;
     protected ScreenBuilders screenBuilders;
 
@@ -74,8 +74,8 @@ public class LoginScreenAuthenticationSupport {
     }
 
     @Autowired
-    public void setUiScreensProperties(UiScreensProperties screensProperties) {
-        this.screensProperties = screensProperties;
+    public void setUiScreenProperties(UiScreenProperties screenProperties) {
+        this.screenProperties = screenProperties;
     }
 
     @Autowired
@@ -101,7 +101,7 @@ public class LoginScreenAuthenticationSupport {
      * {@link CoreProperties#getAvailableLocales()} list.
      * <p>
      * After successful authentication, there will be an attempt to open the main screen using
-     * {@link UiScreensProperties#getMainScreenId()} from {@link FrameOwner}
+     * {@link UiScreenProperties#getMainScreenId()} from {@link FrameOwner}
      * if it is not {@code null}.
      *
      * @param authDetails authentication details
@@ -139,7 +139,7 @@ public class LoginScreenAuthenticationSupport {
 
     protected void showMainScreen(@Nullable FrameOwner frameOwner) {
         if (frameOwner != null) {
-            String mainScreenId = screensProperties.getMainScreenId();
+            String mainScreenId = screenProperties.getMainScreenId();
             screenBuilders.screen(frameOwner)
                     .withScreenId(mainScreenId)
                     .withOpenMode(OpenMode.ROOT)
