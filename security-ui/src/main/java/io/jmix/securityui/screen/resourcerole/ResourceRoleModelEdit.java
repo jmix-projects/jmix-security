@@ -34,6 +34,7 @@ import io.jmix.ui.action.list.AddAction;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.action.list.ViewAction;
+import io.jmix.ui.builder.AfterScreenCloseEvent;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.CollectionContainer;
@@ -212,7 +213,7 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
                 .show();
     }
 
-    private void addPoliciesFromMultiplePoliciesScreen(AfterCloseEvent afterCloseEvent) {
+    private void addPoliciesFromMultiplePoliciesScreen(AfterScreenCloseEvent afterCloseEvent) {
         if (MultipleResourcePolicyModelCreateScreen.COMMIT_ACTION_ID
                 .equals(((StandardCloseAction) afterCloseEvent.getCloseAction()).getActionId())) {
             MultipleResourcePolicyModelCreateScreen screen =
