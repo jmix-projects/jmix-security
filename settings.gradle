@@ -1,3 +1,5 @@
+// test 4
+
 rootProject.name = 'jmix-security'
 
 include 'security'
