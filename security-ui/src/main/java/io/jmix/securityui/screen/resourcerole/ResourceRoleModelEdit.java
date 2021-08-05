@@ -234,6 +234,20 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         }
     }
 
+    @Subscribe("resourcePoliciesTable.createGraphQLPolicy")
+    public void onGraphQLPoliciesTableCreateGraphQLPolicy(Action.ActionPerformedEvent event) {
+        screenBuilders.editor(resourcePoliciesTable)
+                .withScreenClass(GraphQLResourcePolicyModelEdit.class)
+                .newEntity()
+                .withInitializer(resourcePolicyModel -> {
+                    resourcePolicyModel.setType(ResourcePolicyType.GRAPHQL);
+                    resourcePolicyModel.setAction(ResourcePolicy.DEFAULT_ACTION);
+                    resourcePolicyModel.setEffect(ResourcePolicyEffect.ALLOW);
+                })
+                .build()
+                .show();
+    }
+
     @Subscribe("resourcePoliciesTable.createSpecificPolicy")
     public void onResourcePoliciesTableCreateSpecificPolicy(Action.ActionPerformedEvent event) {
         screenBuilders.editor(resourcePoliciesTable)
