@@ -16,17 +16,20 @@
 
 package io.jmix.security.impl.role.provider;
 
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder;
+import io.jmix.security.impl.role.builder.extractor.ResourcePolicyExtractor;
+import io.jmix.security.impl.role.helper.RoleHelper;
+import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.role.ResourceRoleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -39,24 +42,63 @@ public class AnnotatedResourceRoleProvider implements ResourceRoleProvider {
 
     protected Map<String, ResourceRole> roles;
 
+    private final AnnotatedRoleBuilder annotatedRoleBuilder;
+
+    private final Collection<ResourcePolicyExtractor> resourcePolicyExtractors;
+
     @Autowired
     public AnnotatedResourceRoleProvider(JmixModulesClasspathScanner classpathScanner,
-                                         AnnotatedRoleBuilder annotatedRoleBuilder) {
+                                         AnnotatedRoleBuilder annotatedRoleBuilder,
+                                         Collection<ResourcePolicyExtractor> resourcePolicyExtractors) {
+        this.annotatedRoleBuilder = annotatedRoleBuilder;
+        this.resourcePolicyExtractors = resourcePolicyExtractors;
+
         Set<String> classNames = classpathScanner.getClassNames(ResourceRoleDetector.class);
         roles = classNames.stream()
                 .map(annotatedRoleBuilder::createResourceRole)
                 .collect(Collectors.toMap(ResourceRole::getCode, Function.identity()));
     }
 
+    //refresh() - ?
+
     @Override
     public Collection<ResourceRole> getAllRoles() {
+        Set<Map.Entry<String, ResourceRole>> entrySet = roles.entrySet();
+        for (Map.Entry<String, ResourceRole> entry : entrySet) {
+            String code = entry.getKey();
+            roles.put(code, findRoleByCode(code));
+        }
+        //TODO Create method refresh() - it adds roles absent in cache
         return roles.values();
     }
 
     @Override
     @Nullable
     public ResourceRole findRoleByCode(String code) {
-        return roles.get(code);
+        // TODO Add new role by its code
+        // if(!roles.get(code) == null) {
+        //  return addRole(code);
+        // }
+
+        ResourceRole oldRole = roles.get(code);
+        Collection<ResourcePolicy> oldResourcePolicies = oldRole.getAllResourcePolicies();
+
+        String roleClassName = roles.get(code).getClass().getName();
+        Class<?> roleClass = RoleHelper.loadClass(roleClassName);
+
+        Collection<ResourcePolicy> newResourcePolicies = RoleHelper.extractResourcePolicies(roleClass, resourcePolicyExtractors);
+
+        oldResourcePolicies = new HashSet<>(oldResourcePolicies);
+
+        newResourcePolicies = new HashSet<>(newResourcePolicies);
+
+        if (!oldResourcePolicies.equals(newResourcePolicies)) {
+            ResourceRole newRole = annotatedRoleBuilder.createResourceRole(roleClassName);
+            roles.put(code, newRole);
+            return newRole;
+        }
+
+        return oldRole;
     }
 
     @Override
