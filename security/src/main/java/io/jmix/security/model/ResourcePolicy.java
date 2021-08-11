@@ -19,7 +19,6 @@ package io.jmix.security.model;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Describes a permission to a resource.
@@ -62,21 +61,6 @@ public class ResourcePolicy implements Serializable {
         this.effect = builder.effect;
         this.policyGroup = builder.policyGroup;
         this.customProperties = builder.customProperties;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ResourcePolicy that = (ResourcePolicy) o;
-        return type.equals(that.type) && Objects.equals(resource, that.resource) && Objects.equals(action, that.action)
-                && Objects.equals(effect, that.effect) && Objects.equals(policyGroup, that.policyGroup)
-                && customProperties.equals(that.customProperties);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, resource, action, effect, policyGroup, customProperties);
     }
 
     public static Builder builder(String type, String resource) {

@@ -16,20 +16,19 @@
 
 package io.jmix.security.impl.role.provider;
 
-import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.DevelopmentException;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
+import io.jmix.security.SecurityProperties;
 import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder;
-import io.jmix.security.impl.role.builder.extractor.ResourcePolicyExtractor;
-import io.jmix.security.impl.role.helper.RoleHelper;
-import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.role.ResourceRoleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -40,69 +39,59 @@ import java.util.stream.Collectors;
 @Component("sec_AnnotatedResourceRoleProvider")
 public class AnnotatedResourceRoleProvider implements ResourceRoleProvider {
 
-    protected Map<String, ResourceRole> roles;
+    private final JmixModulesClasspathScanner classpathScanner;
+
+    private final ResourceRoleDetector detector;
 
     private final AnnotatedRoleBuilder annotatedRoleBuilder;
 
-    private final Collection<ResourcePolicyExtractor> resourcePolicyExtractors;
+    protected Map<String, ResourceRole> roles;
+
+    @Autowired
+    private SecurityProperties securityProperties;
 
     @Autowired
     public AnnotatedResourceRoleProvider(JmixModulesClasspathScanner classpathScanner,
                                          AnnotatedRoleBuilder annotatedRoleBuilder,
-                                         Collection<ResourcePolicyExtractor> resourcePolicyExtractors) {
+                                         ResourceRoleDetector detector) {
+        this.classpathScanner = classpathScanner;
         this.annotatedRoleBuilder = annotatedRoleBuilder;
-        this.resourcePolicyExtractors = resourcePolicyExtractors;
+        this.detector = detector;
 
-        Set<String> classNames = classpathScanner.getClassNames(ResourceRoleDetector.class);
-        roles = classNames.stream()
-                .map(annotatedRoleBuilder::createResourceRole)
-                .collect(Collectors.toMap(ResourceRole::getCode, Function.identity()));
+        buildRolesCache();
     }
-
-    //refresh() - ?
 
     @Override
     public Collection<ResourceRole> getAllRoles() {
-        Set<Map.Entry<String, ResourceRole>> entrySet = roles.entrySet();
-        for (Map.Entry<String, ResourceRole> entry : entrySet) {
-            String code = entry.getKey();
-            roles.put(code, findRoleByCode(code));
-        }
-        //TODO Create method refresh() - it adds roles absent in cache
         return roles.values();
     }
 
     @Override
     @Nullable
     public ResourceRole findRoleByCode(String code) {
-        // TODO Add new role by its code
-        // if(!roles.get(code) == null) {
-        //  return addRole(code);
-        // }
-
-        ResourceRole oldRole = roles.get(code);
-        Collection<ResourcePolicy> oldResourcePolicies = oldRole.getAllResourcePolicies();
-
-        String roleClassName = roles.get(code).getClass().getName();
-        Class<?> roleClass = RoleHelper.loadClass(roleClassName);
-
-        Collection<ResourcePolicy> newResourcePolicies = RoleHelper.extractResourcePolicies(roleClass, resourcePolicyExtractors);
-
-        oldResourcePolicies = new HashSet<>(oldResourcePolicies);
-
-        newResourcePolicies = new HashSet<>(newResourcePolicies);
-
-        if (!oldResourcePolicies.equals(newResourcePolicies)) {
-            ResourceRole newRole = annotatedRoleBuilder.createResourceRole(roleClassName);
-            roles.put(code, newRole);
-            return newRole;
-        }
-
-        return oldRole;
+        return roles.get(code);
     }
 
     @Override
     public boolean deleteRole(ResourceRole role) {
         throw new UnsupportedOperationException("Annotated role cannot be deleted");
     }
+
+    public void refreshAllRoles() {
+        if (securityProperties.isAnnotatedRolesHotDeployEnabled()) {
+            classpathScanner.refreshClassNames(detector);
+            buildRolesCache();
+            return;
+        }
+        throw new DevelopmentException("Annotated roles hot deploy is forbidden");
+    }
+
+    private void buildRolesCache() {
+        Set<String> classNames = classpathScanner.getClassNames(ResourceRoleDetector.class);
+
+        roles = classNames.stream()
+                .map(annotatedRoleBuilder::createResourceRole)
+                .collect(Collectors.toMap(ResourceRole::getCode, Function.identity()));
+    }
+
 }
