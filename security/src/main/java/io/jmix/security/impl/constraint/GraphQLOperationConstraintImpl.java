@@ -25,7 +25,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component("sec_graphQLOperationConstraintImpl")
+@Component("sec_GraphQLOperationConstraintImpl")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class GraphQLOperationConstraintImpl implements GraphQLOperationConstraint<GraphQLOperationAccessContext> {
     protected SecureOperations secureOperations;
@@ -48,7 +48,7 @@ public class GraphQLOperationConstraintImpl implements GraphQLOperationConstrain
 
     @Override
     public void applyTo(GraphQLOperationAccessContext context) {
-        if (!secureOperations.isGraphQLPermitted(context.getName(), policyStore)) {
+        if (!secureOperations.isGraphQLPermitted(context.getOperationName(), policyStore)) {
             context.setDenied();
         }
     }
