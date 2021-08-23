@@ -39,5 +39,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(GraphQLPolicyContainer.class)
 public @interface GraphQLPolicy {
-    String[] operationNames() default {};
+    String[] operations() default {};
 }

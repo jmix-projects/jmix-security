@@ -37,7 +37,7 @@ public class GraphQLPolicyExtractor implements ResourcePolicyExtractor {
         Set<GraphQLPolicy> annotations = AnnotatedElementUtils.findMergedRepeatableAnnotations(method,
                 GraphQLPolicy.class, GraphQLPolicyContainer.class);
         for (GraphQLPolicy annotation : annotations) {
-            for (String endpointID : annotation.operationNames()) {
+            for (String endpointID : annotation.operations()) {
                 ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.GRAPHQL, endpointID)
                         .withPolicyGroup(method.getName())
                         .build();
