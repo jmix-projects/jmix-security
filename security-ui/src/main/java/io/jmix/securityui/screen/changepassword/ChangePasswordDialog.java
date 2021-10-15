@@ -17,7 +17,6 @@
 package io.jmix.securityui.screen.changepassword;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Messages;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
@@ -39,7 +38,7 @@ import java.util.function.Function;
 public class ChangePasswordDialog extends Screen {
 
     @Autowired
-    protected Messages messages;
+    protected MessageBundle messageBundle;
     @Autowired
     protected UserManager userManager;
     @Autowired
@@ -141,7 +140,7 @@ public class ChangePasswordDialog extends Screen {
         Preconditions.checkNotNullArgument(user, "Dialog cannot be opened without user");
 
         getWindow().setCaption(String.format(
-                messages.getMessage("changePasswordDialog.captionWithUserName"), user.getUsername()));
+                messageBundle.getMessage("ChangePasswordDialog.captionWithUserName"), user.getUsername()));
     }
 
     @Subscribe("okBtn")
@@ -160,19 +159,19 @@ public class ChangePasswordDialog extends Screen {
                 .then(() -> {
                     notifications.create()
                             .withType(Notifications.NotificationType.HUMANIZED)
-                            .withCaption(messages.getMessage("changePasswordDialog.passwordChanged"))
+                            .withCaption(messageBundle.getMessage("ChangePasswordDialog.passwordChanged"))
                             .show();
                     close(StandardOutcome.COMMIT);
                 }).otherwise(() -> {
                     if (currentPasswordField.isVisible()) {
                         notifications.create()
                                 .withType(Notifications.NotificationType.ERROR)
-                                .withCaption(messages.getMessage("changePasswordDialog.wrongCurrentPassword"))
+                                .withCaption(messageBundle.getMessage("ChangePasswordDialog.wrongCurrentPassword"))
                                 .show();
                     } else {
                         notifications.create()
                                 .withType(Notifications.NotificationType.WARNING)
-                                .withCaption(messages.getMessage("changePasswordDialog.currentPasswordWarning"))
+                                .withCaption(messageBundle.getMessage("ChangePasswordDialog.currentPasswordWarning"))
                                 .show();
                     }
                 });
@@ -212,21 +211,21 @@ public class ChangePasswordDialog extends Screen {
         String currentPassword = currentPasswordField.getValue();
 
         if (Strings.isNullOrEmpty(password)) {
-            errors.add(passwordField, messages.getMessage("changePasswordDialog.passwordRequired"));
+            errors.add(passwordField, messageBundle.getMessage("ChangePasswordDialog.passwordRequired"));
         }
         if (Strings.isNullOrEmpty(confirmPassword)) {
-            errors.add(passwordField, messages.getMessage("changePasswordDialog.confirmPasswordRequired"));
+            errors.add(passwordField, messageBundle.getMessage("ChangePasswordDialog.confirmPasswordRequired"));
         }
         if (!Strings.isNullOrEmpty(password)
                 && !Strings.isNullOrEmpty(confirmPassword)
                 && !Objects.equals(password, confirmPassword)) {
-            errors.add(confirmPasswordField, messages.getMessage("changePasswordDialog.passwordsDoNotMatch"));
+            errors.add(confirmPasswordField, messageBundle.getMessage("ChangePasswordDialog.passwordsDoNotMatch"));
         }
         if (currentPasswordField.isVisible()) {
             if (Strings.isNullOrEmpty(currentPassword)) {
-                errors.add(passwordField, messages.getMessage("changePasswordDialog.currentPasswordRequired"));
+                errors.add(passwordField, messageBundle.getMessage("ChangePasswordDialog.currentPasswordRequired"));
             } else if (Objects.equals(password, currentPassword)) {
-                errors.add(passwordField, messages.getMessage("changePasswordDialog.currentPasswordWarning"));
+                errors.add(passwordField, messageBundle.getMessage("ChangePasswordDialog.currentPasswordWarning"));
             }
         }
 
