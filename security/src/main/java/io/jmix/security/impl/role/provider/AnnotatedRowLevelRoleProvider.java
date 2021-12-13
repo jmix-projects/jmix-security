@@ -41,7 +41,9 @@ public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
 
     private final JmixModulesClasspathScanner classpathScanner;
 
-    private final RowLevelRoleDetector detector;
+    private final RowLevelRoleDetector rowLevelRoleDetector;
+
+    private final ResourceRoleDetector resourceRoleDetector;
 
     private final AnnotatedRoleBuilder annotatedRoleBuilder;
 
@@ -53,10 +55,12 @@ public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
     @Autowired
     public AnnotatedRowLevelRoleProvider(JmixModulesClasspathScanner classpathScanner,
                                          AnnotatedRoleBuilder annotatedRoleBuilder,
-                                         RowLevelRoleDetector detector) {
+                                         RowLevelRoleDetector rowLevelRoleDetector,
+                                         ResourceRoleDetector resourceRoleDetector) {
         this.classpathScanner = classpathScanner;
         this.annotatedRoleBuilder = annotatedRoleBuilder;
-        this.detector = detector;
+        this.rowLevelRoleDetector = rowLevelRoleDetector;
+        this.resourceRoleDetector = resourceRoleDetector;
 
         buildRolesCache();
     }
@@ -79,7 +83,8 @@ public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
 
     public void refreshRoles() {
         if (securityProperties.isAnnotatedRolesHotDeployEnabled()) {
-            classpathScanner.refreshClassNames(detector);
+            classpathScanner.refreshClassNames(rowLevelRoleDetector);
+            classpathScanner.refreshClassNames(resourceRoleDetector);
             buildRolesCache();
             return;
         }
