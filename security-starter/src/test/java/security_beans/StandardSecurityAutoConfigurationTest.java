@@ -39,6 +39,7 @@ public class StandardSecurityAutoConfigurationTest {
                     SecurityAutoConfiguration.class
                     ))
             .withBean(InMemoryUserRepository.class)
+            .withAllowCircularReferences(true)
             .withAllowBeanDefinitionOverriding(true);
 
     @Test
