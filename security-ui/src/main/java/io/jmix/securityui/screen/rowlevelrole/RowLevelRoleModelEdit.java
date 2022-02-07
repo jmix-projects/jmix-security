@@ -197,9 +197,9 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
     public void onUrlParamsChanged(UrlParamsChangedEvent event) {
         Map<String, String> params = event.getParams();
         if (params.containsKey("code")) {
-            String resourceRoleCode = params.get("code");
+            String rowLevelCode = params.get("code");
 
-            RowLevelRole role = roleRepository.getRoleByCode(resourceRoleCode);
+            RowLevelRole role = roleRepository.getRoleByCode(rowLevelCode);
             RowLevelRoleModel roleModel = roleModelConverter.createRowLevelRoleModel(role);
 
             setEntityToEdit(roleModel);
